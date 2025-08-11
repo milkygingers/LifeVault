@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-vault-bg text-vault-text;
+  }
+  
+  * {
+    @apply border-vault-text/10;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-vault-primary hover:bg-vault-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-vault-surface hover:bg-gray-50 text-vault-text px-4 py-2 rounded-lg font-medium border transition-colors;
+  }
+  
+  .btn-ghost {
+    @apply hover:bg-gray-100 text-vault-text px-3 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors;
+  }
+  
+  .sidebar-item.active {
+    @apply bg-vault-primary/10 text-vault-primary;
+  }
+  
+  .toolbar-tab {
+    @apply flex items-center gap-2 px-4 py-2 font-medium text-sm rounded-lg transition-colors;
+  }
+  
+  .toolbar-tab.active {
+    @apply bg-vault-primary text-white;
+  }
+  
+  .toolbar-tab:not(.active) {
+    @apply text-vault-text-secondary hover:text-vault-text hover:bg-gray-100;
+  }
+  
+  .card {
+    @apply bg-vault-surface rounded-xl shadow-sm border;
+  }
+  
+  .editor-container {
+    @apply bg-vault-surface border rounded-lg overflow-hidden;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.7);
+  }
+}
+
+/* Custom scrollbars for main content areas */
+.main-content {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* Custom styles for React Flow */
+.react-flow__background {
+  background-color: #fafafa;
+}
+
+.react-flow__node {
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.react-flow__node.selected {
+  border-color: #6366f1;
+}
+
+.react-flow__edge-path {
+  stroke: #6366f1;
+  stroke-width: 2;
+}
+
+/* Markdown editor styles */
+.markdown-editor {
+  min-height: 400px;
+}
+
+.markdown-preview {
+  max-width: none;
+}
+
+.markdown-preview h1 {
+  @apply text-2xl font-bold mb-4;
+}
+
+.markdown-preview h2 {
+  @apply text-xl font-semibold mb-3;
+}
+
+.markdown-preview h3 {
+  @apply text-lg font-medium mb-2;
+}
+
+.markdown-preview p {
+  @apply mb-4 leading-relaxed;
+}
+
+.markdown-preview ul, .markdown-preview ol {
+  @apply mb-4 pl-6;
+}
+
+.markdown-preview li {
+  @apply mb-1;
+}
+
+.markdown-preview blockquote {
+  @apply border-l-4 border-vault-primary pl-4 italic;
+}
+
+.markdown-preview code {
+  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+}
+
+.markdown-preview pre {
+  @apply bg-gray-100 p-4 rounded-lg overflow-x-auto;
+}
+
+/* Dark mode styles */
+.dark .react-flow__background {
+  background-color: #0f172a;
+}
+
+.dark .react-flow__node {
+  background: #1e293b;
+  border-color: #334155;
+  color: white;
+}
+
+.dark .markdown-preview code {
+  @apply bg-gray-800;
+}
+
+.dark .markdown-preview pre {
+  @apply bg-gray-800;
+}
