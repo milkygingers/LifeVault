@@ -281,66 +281,74 @@ const MindMapView: React.FC<MindMapViewProps> = ({ workspace }) => {
   return (
     <div className="h-full bg-vault-bg relative overflow-hidden">
       {/* Controls */}
-      <div className="absolute top-4 left-4 z-10 bg-vault-surface rounded-lg shadow-sm border p-2">
-        <div className="flex items-center gap-2">
+      <div className="absolute top-6 left-6 z-10 glass-effect rounded-2xl border p-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleZoomIn}
-            className="btn-ghost p-2"
+            className="btn-icon"
             title="Zoom In"
           >
-            <ZoomIn size={16} />
+            <ZoomIn size={18} />
           </button>
           <button
             onClick={handleZoomOut}
-            className="btn-ghost p-2"
+            className="btn-icon"
             title="Zoom Out"
           >
-            <ZoomOut size={16} />
+            <ZoomOut size={18} />
           </button>
           <button
             onClick={handleResetView}
-            className="btn-ghost p-2"
+            className="btn-icon"
             title="Reset View"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={18} />
           </button>
-          <div className="w-px h-6 bg-gray-200 mx-1"></div>
-          <button className="btn-ghost p-2" title="Export">
-            <Download size={16} />
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          <button 
+            onClick={() => alert('Export functionality coming soon!')}
+            className="btn-icon" 
+            title="Export"
+          >
+            <Download size={18} />
           </button>
-          <button className="btn-ghost p-2" title="Settings">
-            <Settings size={16} />
+          <button 
+            onClick={() => alert('Mind map settings coming soon!')}
+            className="btn-icon" 
+            title="Settings"
+          >
+            <Settings size={18} />
           </button>
         </div>
       </div>
 
       {/* Info Panel */}
-      <div className="absolute top-4 right-4 z-10 bg-vault-surface rounded-lg shadow-sm border p-4 max-w-xs">
-        <h3 className="font-semibold text-vault-text mb-2">Mind Map</h3>
-        <p className="text-sm text-vault-text-secondary mb-3">
+      <div className="absolute top-6 right-6 z-10 glass-effect rounded-2xl border p-6 max-w-xs">
+        <h3 className="font-bold text-lg gradient-text mb-3">Mind Map</h3>
+        <p className="text-sm text-vault-text-secondary mb-4 leading-relaxed">
           Visualize your workspace structure and connections between notes.
         </p>
-        <div className="space-y-2 text-xs text-vault-text-secondary">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-vault-primary rounded-full"></div>
-            <span>Folders</span>
+        <div className="space-y-3 text-sm text-vault-text-secondary">
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 bg-vault-primary rounded-full shadow-sm"></div>
+            <span className="font-medium">Folders</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-vault-secondary rounded-full"></div>
-            <span>Notes</span>
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 bg-vault-secondary rounded-full shadow-sm"></div>
+            <span className="font-medium">Notes</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-vault-accent rounded-full"></div>
-            <span>Tags</span>
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 bg-vault-accent rounded-full shadow-sm"></div>
+            <span className="font-medium">Tags</span>
           </div>
         </div>
         
         {selectedNode && (
-          <div className="mt-4 pt-3 border-t">
-            <div className="font-medium text-sm text-vault-text">
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="font-semibold text-vault-text">
               {nodes.find(n => n.id === selectedNode)?.label}
             </div>
-            <div className="text-xs text-vault-text-secondary">
+            <div className="text-sm text-vault-text-secondary capitalize mt-1">
               {nodes.find(n => n.id === selectedNode)?.type}
             </div>
           </div>

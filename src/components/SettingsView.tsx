@@ -72,9 +72,124 @@ const SettingsView: React.FC<SettingsViewProps> = ({ workspace }) => {
           ...prev,
           backgroundImage: e.target?.result as string
         }));
+        alert('Background image updated successfully!');
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleResetBackground = () => {
+    setSettings(prev => ({
+      ...prev,
+      backgroundImage: ''
+    }));
+    alert('Background reset to default!');
+  };
+
+  const handleExportData = (format: string) => {
+    try {
+      let data: any = {};
+      
+      // Get notes from localStorage
+      const notes = localStorage.getItem('lifevault-notes');
+      if (notes) {
+        data.notes = JSON.parse(notes);
+      }
+      
+      // Get settings
+      data.settings = {
+        ...settings,
+        workspace: workspace
+      };
+      
+      let exportData: string;
+      let fileName: string;
+      let mimeType: string;
+      
+      switch (format) {
+        case 'json':
+          exportData = JSON.stringify(data, null, 2);
+          fileName = `lifevault-export-${new Date().toISOString().split('T')[0]}.json`;
+          mimeType = 'application/json';
+          break;
+        case 'zip':
+          alert('ZIP export functionality requires additional setup. JSON export available instead.');
+          return;
+        case 'markdown':
+          exportData = data.notes?.map((note: any) => note.content).join('\n\n---\n\n') || '';
+          fileName = `lifevault-notes-${new Date().toISOString().split('T')[0]}.md`;
+          mimeType = 'text/markdown';
+          break;
+        case 'svg':
+          alert('SVG export for mind maps coming soon!');
+          return;
+        default:
+          return;
+      }
+      
+      // Create and download file
+      const blob = new Blob([exportData], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert(`Data exported successfully as ${fileName}!`);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export data. Please try again.');
+    }
+  };
+
+  const handleImportData = (format: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = format === 'json' ? '.json' : '.md,.txt';
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          
+          if (format === 'json') {
+            const data = JSON.parse(content);
+            if (data.notes) {
+              localStorage.setItem('lifevault-notes', JSON.stringify(data.notes));
+            }
+            if (data.settings) {
+              setSettings(prev => ({ ...prev, ...data.settings }));
+              localStorage.setItem('lifevault-settings', JSON.stringify(data.settings));
+            }
+          } else if (format === 'markdown') {
+            const notes = content.split('\n---\n').map((noteContent, index) => ({
+              path: `imported-note-${index}.md`,
+              name: `Imported Note ${index + 1}`,
+              content: noteContent.trim(),
+              created: new Date().toISOString(),
+              modified: new Date().toISOString(),
+              tags: []
+            }));
+            localStorage.setItem('lifevault-notes', JSON.stringify(notes));
+          }
+          
+          alert('Data imported successfully! Please refresh the page to see changes.');
+        } catch (error) {
+          console.error('Import failed:', error);
+          alert('Failed to import data. Please check the file format.');
+        }
+      };
+      reader.readAsText(file);
+    };
+    
+    input.click();
   };
 
   const handleSelectNewWorkspace = async () => {
@@ -297,16 +412,25 @@ const SettingsView: React.FC<SettingsViewProps> = ({ workspace }) => {
       <div>
         <h3 className="text-lg font-semibold text-vault-text mb-4">Import Data</h3>
         <div className="space-y-3">
-          <button className="btn-secondary w-full">
-            <Upload size={16} className="mr-2" />
+          <button 
+            onClick={() => handleImportData('notion')}
+            className="btn-secondary w-full"
+          >
+            <Upload size={16} />
             Import from Notion
           </button>
-          <button className="btn-secondary w-full">
-            <Upload size={16} className="mr-2" />
+          <button 
+            onClick={() => handleImportData('obsidian')}
+            className="btn-secondary w-full"
+          >
+            <Upload size={16} />
             Import from Obsidian
           </button>
-          <button className="btn-secondary w-full">
-            <Upload size={16} className="mr-2" />
+          <button 
+            onClick={() => handleImportData('markdown')}
+            className="btn-secondary w-full"
+          >
+            <Upload size={16} />
             Import Markdown Files
           </button>
         </div>
@@ -315,16 +439,25 @@ const SettingsView: React.FC<SettingsViewProps> = ({ workspace }) => {
       <div>
         <h3 className="text-lg font-semibold text-vault-text mb-4">Export Data</h3>
         <div className="space-y-3">
-          <button className="btn-secondary w-full">
-            <Download size={16} className="mr-2" />
+          <button 
+            onClick={() => handleExportData('zip')}
+            className="btn-secondary w-full"
+          >
+            <Download size={16} />
             Export as ZIP Archive
           </button>
-          <button className="btn-secondary w-full">
-            <Download size={16} className="mr-2" />
+          <button 
+            onClick={() => handleExportData('markdown')}
+            className="btn-secondary w-full"
+          >
+            <Download size={16} />
             Export to Markdown
           </button>
-          <button className="btn-secondary w-full">
-            <Download size={16} className="mr-2" />
+          <button 
+            onClick={() => handleExportData('svg')}
+            className="btn-secondary w-full"
+          >
+            <Download size={16} />
             Export Mind Map as SVG
           </button>
         </div>

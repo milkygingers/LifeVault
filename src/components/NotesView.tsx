@@ -188,44 +188,44 @@ const NotesView: React.FC<NotesViewProps> = ({ workspace, searchTerm }) => {
   );
 
   const renderNotesList = () => (
-    <div className="w-80 bg-vault-surface border-r h-full overflow-y-auto">
-      <div className="p-4 border-b">
+    <div className="w-80 bg-white border-r border-gray-200 h-full overflow-y-auto scrollbar-thin">
+      <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-vault-text">Notes</h2>
+          <h2 className="font-bold text-xl gradient-text">Notes</h2>
           <button 
             onClick={handleCreateNote}
-            className="btn-ghost p-2"
+            className="btn-icon"
             title="Create New Note"
           >
-            <Plus size={16} />
+            <Plus size={18} />
           </button>
         </div>
         
-        <div className="text-sm text-vault-text-secondary">
+        <div className="text-sm text-vault-text-secondary font-medium">
           {filteredNotes.length} note{filteredNotes.length !== 1 ? 's' : ''}
         </div>
       </div>
       
-      <div className="p-2">
+      <div className="p-3">
         {filteredNotes.map((note) => (
           <div
             key={note.path}
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
+            className={`p-4 mx-2 rounded-xl cursor-pointer transition-all duration-300 group mb-3 ${
               selectedNote?.path === note.path 
-                ? 'bg-vault-primary/10 border border-vault-primary/20' 
-                : 'hover:bg-gray-50'
+                ? 'bg-gradient-to-r from-vault-primary/10 to-vault-secondary/10 border border-vault-primary/20 shadow-sm' 
+                : 'hover:bg-gray-50 hover:shadow-sm'
             }`}
             onClick={() => handleSelectNote(note)}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-vault-text truncate mb-1">
+                <div className="font-semibold text-vault-text truncate mb-2">
                   {note.name}
                 </div>
-                <div className="text-sm text-vault-text-secondary line-clamp-2">
+                <div className="text-sm text-vault-text-secondary line-clamp-2 leading-relaxed">
                   {note.content.split('\n')[0].replace(/^#+\s*/, '') || 'No content'}
                 </div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-3 mt-3">
                   <div className="flex items-center gap-1 text-xs text-vault-text-secondary">
                     <Calendar size={12} />
                     {note.modified.toLocaleDateString()}
@@ -233,7 +233,7 @@ const NotesView: React.FC<NotesViewProps> = ({ workspace, searchTerm }) => {
                   {note.tags.length > 0 && (
                     <div className="flex items-center gap-1">
                       <Tag size={12} className="text-vault-text-secondary" />
-                      <span className="text-xs text-vault-primary">
+                      <span className="text-xs text-vault-primary font-medium">
                         {note.tags.slice(0, 2).join(', ')}
                         {note.tags.length > 2 && '...'}
                       </span>
@@ -242,24 +242,28 @@ const NotesView: React.FC<NotesViewProps> = ({ workspace, searchTerm }) => {
                 </div>
               </div>
               
-              <button className="opacity-0 group-hover:opacity-100 btn-ghost p-1">
-                <MoreHorizontal size={14} />
+              <button className="opacity-0 group-hover:opacity-100 btn-icon p-2">
+                <MoreHorizontal size={16} />
               </button>
             </div>
           </div>
         ))}
         
         {filteredNotes.length === 0 && (
-          <div className="text-center py-8">
-            <FileText className="mx-auto text-vault-text-secondary mb-3" size={32} />
-            <p className="text-vault-text-secondary">
+          <div className="empty-state">
+            <FileText className="empty-state-icon" size={48} />
+            <h3 className="empty-state-title">
               {searchTerm ? 'No notes found' : 'No notes yet'}
+            </h3>
+            <p className="empty-state-subtitle">
+              {searchTerm ? 'Try adjusting your search terms.' : 'Create your first note to get started.'}
             </p>
             {!searchTerm && (
               <button 
                 onClick={handleCreateNote}
-                className="btn-primary mt-3"
+                className="btn-primary mt-6"
               >
+                <Plus size={18} />
                 Create your first note
               </button>
             )}
@@ -270,50 +274,44 @@ const NotesView: React.FC<NotesViewProps> = ({ workspace, searchTerm }) => {
   );
 
   const renderEditor = () => (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-white">
       {selectedNote && (
         <>
           {/* Editor Header */}
-          <div className="p-4 border-b bg-vault-surface">
+          <div className="p-6 border-b border-gray-200 bg-white">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-semibold text-vault-text">
+                <h1 className="text-2xl font-bold gradient-text">
                   {selectedNote.name}
                 </h1>
-                <div className="text-sm text-vault-text-secondary">
+                <div className="text-sm text-vault-text-secondary mt-1 font-medium">
                   Last modified: {selectedNote.modified.toLocaleString()}
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 {/* View Mode Toggle */}
-                <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <div className="view-toggle-group">
                   <button
                     onClick={() => setViewMode('edit')}
-                    className={`p-2 rounded-md transition-colors ${
-                      viewMode === 'edit' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                    }`}
+                    className={`view-toggle-btn ${viewMode === 'edit' ? 'active' : ''}`}
                     title="Edit Mode"
                   >
-                    <Edit3 size={16} />
+                    <Edit3 size={18} />
                   </button>
                   <button
                     onClick={() => setViewMode('split')}
-                    className={`p-2 rounded-md transition-colors ${
-                      viewMode === 'split' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                    }`}
+                    className={`view-toggle-btn ${viewMode === 'split' ? 'active' : ''}`}
                     title="Split Mode"
                   >
-                    <div className="w-4 h-4 border border-gray-400 border-r-2"></div>
+                    <div className="w-5 h-5 border-2 border-gray-400 border-r-4 rounded-sm"></div>
                   </button>
                   <button
                     onClick={() => setViewMode('preview')}
-                    className={`p-2 rounded-md transition-colors ${
-                      viewMode === 'preview' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                    }`}
+                    className={`view-toggle-btn ${viewMode === 'preview' ? 'active' : ''}`}
                     title="Preview Mode"
                   >
-                    <Eye size={16} />
+                    <Eye size={18} />
                   </button>
                 </div>
                 
@@ -322,7 +320,7 @@ const NotesView: React.FC<NotesViewProps> = ({ workspace, searchTerm }) => {
                     onClick={handleSaveNote}
                     className="btn-primary"
                   >
-                    <Save size={16} className="mr-2" />
+                    <Save size={18} />
                     Save
                   </button>
                 )}

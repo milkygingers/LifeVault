@@ -48,66 +48,74 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onWorkspaceSelected }) =>
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-pastel flex items-center justify-center p-8">
-      <div className="max-w-4xl w-full">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-8 animate-fade-in">
+      <div className="max-w-5xl w-full">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="flex justify-center mb-8">
-            <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-xl">
-              <span className="text-4xl font-bold text-vault-primary">LV</span>
+        <div className="text-center mb-20">
+          <div className="flex justify-center mb-10 animate-bounce-gentle">
+            <div className="w-28 h-28 bg-gradient-to-r from-vault-primary to-vault-secondary rounded-3xl flex items-center justify-center shadow-2xl">
+              <span className="text-5xl font-bold text-white">LV</span>
             </div>
           </div>
           
-          <h1 className="text-5xl font-bold text-vault-text mb-6">
-            Welcome to <span className="text-vault-primary">LifeVault</span> ✨
+          <h1 className="text-6xl font-bold text-vault-text mb-8 leading-tight">
+            Welcome to <span className="gradient-text">LifeVault</span> ✨
           </h1>
           
-          <p className="text-xl text-vault-text-secondary mb-8 max-w-2xl mx-auto">
-            Your beautiful, personal productivity workspace that combines the best of Notion, Obsidian, and Ember.ly 🚀
+          <p className="text-2xl text-vault-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
+            Your beautiful, personal productivity workspace that combines the best of 
+            <span className="font-semibold text-vault-primary"> Notion</span>, 
+            <span className="font-semibold text-vault-secondary"> Obsidian</span>, and 
+            <span className="font-semibold text-vault-accent"> Ember.ly</span> 🚀
           </p>
 
           <button
             onClick={handleSelectFolder}
-            className="btn-primary text-lg px-10 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-200 bg-gradient-to-r from-vault-primary to-vault-secondary"
+            className="btn-primary text-xl px-12 py-6 text-white font-bold shadow-2xl hover:shadow-vault-primary/25 animate-bounce-gentle"
           >
-            <FolderOpen className="inline mr-3" size={24} />
+            <FolderOpen className="inline mr-4" size={28} />
             🚀 Start Your Journey
           </button>
           
-          <p className="text-sm text-vault-text-secondary mt-4">
+          <p className="text-lg text-vault-text-secondary mt-6 font-medium">
             Create your personal productivity workspace in seconds ⚡
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div
                 key={index}
-                className="bg-white/80 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/90 transition-colors"
+                className="card p-8 text-center group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-slide-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-vault-primary/10 rounded-lg flex items-center justify-center">
-                    <Icon className="text-vault-primary" size={24} />
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-vault-primary/10 to-vault-secondary/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="text-vault-primary group-hover:text-vault-secondary transition-colors duration-300" size={32} />
                   </div>
                 </div>
-                <h3 className="font-semibold text-vault-text mb-2">{feature.title}</h3>
-                <p className="text-sm text-vault-text-secondary">{feature.description}</p>
+                <h3 className="font-bold text-lg text-vault-text mb-4">{feature.title}</h3>
+                <p className="text-vault-text-secondary leading-relaxed">{feature.description}</p>
               </div>
             );
           })}
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-16">
-          <p className="text-vault-text-secondary mb-2">
-            Built with ❤️ for productive minds
-          </p>
-          <p className="text-sm text-vault-text-secondary">
-            Created by Alyssa • Open Source • Made with React & TypeScript
-          </p>
+        <div className="text-center">
+          <div className="max-w-2xl mx-auto p-8 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20">
+            <p className="text-xl text-vault-text-secondary mb-3 font-medium">
+              Built with ❤️ for productive minds
+            </p>
+            <p className="text-vault-text-secondary">
+              Created by <span className="font-semibold text-vault-primary">Alyssa</span> • 
+              <span className="font-semibold text-vault-secondary"> Open Source</span> • 
+              Made with <span className="font-semibold text-vault-accent">React & TypeScript</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

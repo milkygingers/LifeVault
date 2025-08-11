@@ -29,6 +29,8 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
   const [items, setItems] = useState<FileSystemItem[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
+  const [showNewFolderDialog, setShowNewFolderDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
 
   useEffect(() => {
     loadDirectory(currentPath);
@@ -80,8 +82,42 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
     if (item.isDirectory) {
       navigateToPath(item.path);
     } else {
-      // Handle file opening
+      // Handle file opening - open in appropriate app or view
       console.log('Opening file:', item.path);
+      // For markdown files, you might want to open them in notes view
+      if (item.name.endsWith('.md')) {
+        // Could dispatch to notes view here
+      }
+    }
+  };
+
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim()) return;
+    
+    try {
+      const folderPath = `${currentPath}/${newFolderName.trim()}`;
+      // In a real implementation, you'd create the folder through the electron API
+      console.log('Creating folder:', folderPath);
+      
+      // Simulate folder creation
+      const newFolder: FileSystemItem = {
+        name: newFolderName.trim(),
+        path: folderPath,
+        isDirectory: true,
+        isFile: false
+      };
+      
+      setItems(prev => [newFolder, ...prev].sort((a, b) => {
+        if (a.isDirectory && !b.isDirectory) return -1;
+        if (!a.isDirectory && b.isDirectory) return 1;
+        return a.name.localeCompare(b.name);
+      }));
+      
+      setNewFolderName('');
+      setShowNewFolderDialog(false);
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+      alert('Failed to create folder. Please try again.');
     }
   };
 
@@ -102,26 +138,26 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
   );
 
   const renderGridView = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
       {items.map((item) => (
         <div
           key={item.path}
-          className="card p-4 hover:shadow-md transition-shadow cursor-pointer group"
+          className="card card-interactive p-6 group animate-fade-in"
           onClick={() => handleItemClick(item)}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="mb-3 group-hover:scale-110 transition-transform">
+            <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
               {item.isDirectory ? (
-                <FolderOpen className="text-vault-primary" size={32} />
+                <FolderOpen className="text-vault-primary drop-shadow-sm" size={40} />
               ) : (
-                <FileText className="text-vault-text-secondary" size={32} />
+                <FileText className="text-vault-text-secondary" size={40} />
               )}
             </div>
-            <span className="text-sm font-medium text-vault-text truncate w-full">
+            <span className="text-sm font-semibold text-vault-text truncate w-full">
               {item.name}
             </span>
             {item.isFile && (
-              <span className="text-xs text-vault-text-secondary mt-1">
+              <span className="text-xs text-vault-text-secondary mt-2 px-2 py-1 bg-gray-100 rounded-full">
                 {item.name.split('.').pop()?.toUpperCase()}
               </span>
             )}
@@ -132,34 +168,43 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
   );
 
   const renderListView = () => (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {items.map((item) => (
         <div
           key={item.path}
-          className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer group"
+          className="file-item animate-fade-in"
           onClick={() => handleItemClick(item)}
         >
-          <div className="group-hover:scale-110 transition-transform">
+          <div className="group-hover:scale-110 transition-transform duration-300">
             {item.isDirectory ? (
-              <FolderOpen className="text-vault-primary" size={20} />
+              <FolderOpen className="text-vault-primary drop-shadow-sm" size={24} />
             ) : (
-              <FileText className="text-vault-text-secondary" size={20} />
+              <FileText className="text-vault-text-secondary" size={24} />
             )}
           </div>
           
           <div className="flex-1 min-w-0">
-            <div className="font-medium text-vault-text truncate">
+            <div className="font-semibold text-vault-text truncate">
               {item.name}
             </div>
             {item.isFile && (
+              <div className="text-sm text-vault-text-secondary flex items-center gap-2">
+                <span className="px-2 py-1 bg-gray-100 rounded-md text-xs font-medium">
+                  {item.name.split('.').pop()?.toUpperCase()}
+                </span>
+                <span>•</span>
+                <span>Modified recently</span>
+              </div>
+            )}
+            {item.isDirectory && (
               <div className="text-sm text-vault-text-secondary">
-                {item.name.split('.').pop()?.toUpperCase()} file
+                Folder
               </div>
             )}
           </div>
           
-          <button className="opacity-0 group-hover:opacity-100 btn-ghost p-1 transition-opacity">
-            <MoreHorizontal size={16} />
+          <button className="opacity-0 group-hover:opacity-100 btn-ghost p-2 transition-opacity">
+            <MoreHorizontal size={18} />
           </button>
         </div>
       ))}
@@ -167,37 +212,38 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
   );
 
   return (
-    <div className="h-full bg-vault-bg overflow-y-auto">
-      <div className="p-6">
+    <div className="h-full bg-vault-bg overflow-y-auto scrollbar-thin">
+      <div className="p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-vault-text mb-2">Folders</h1>
+            <h1 className="text-3xl font-bold gradient-text mb-3">Folders</h1>
             {renderBreadcrumbs()}
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center gap-4">
+            <div className="view-toggle-group">
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
+                className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                title="List View"
               >
-                <List size={16} />
+                <List size={18} />
               </button>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
+                className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                title="Grid View"
               >
-                <Grid size={16} />
+                <Grid size={18} />
               </button>
             </div>
             
-            <button className="btn-primary">
-              <Plus size={16} className="mr-2" />
+            <button 
+              onClick={() => setShowNewFolderDialog(true)}
+              className="btn-primary"
+            >
+              <Plus size={18} />
               New Folder
             </button>
           </div>
@@ -205,19 +251,68 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
 
         {/* Content */}
         {items.length === 0 ? (
-          <div className="text-center py-12">
-            <Folder className="mx-auto text-vault-text-secondary mb-4" size={48} />
-            <h3 className="text-lg font-medium text-vault-text mb-2">Empty Folder</h3>
-            <p className="text-vault-text-secondary">
+          <div className="empty-state">
+            <Folder className="empty-state-icon" size={64} />
+            <h3 className="empty-state-title">Empty Folder</h3>
+            <p className="empty-state-subtitle">
               This folder is empty. Create some files or folders to get started.
             </p>
+            <button 
+              onClick={() => setShowNewFolderDialog(true)}
+              className="btn-primary mt-6"
+            >
+              <Plus size={18} />
+              Create Your First Folder
+            </button>
           </div>
         ) : (
-          <div>
+          <div className="animate-fade-in">
             {viewMode === 'grid' ? renderGridView() : renderListView()}
           </div>
         )}
       </div>
+
+      {/* New Folder Dialog */}
+      {showNewFolderDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white rounded-2xl p-8 w-96 shadow-2xl animate-slide-up">
+            <h3 className="text-xl font-semibold text-vault-text mb-4">Create New Folder</h3>
+            <input
+              type="text"
+              placeholder="Folder name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              className="input-primary mb-6"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCreateFolder();
+                if (e.key === 'Escape') {
+                  setShowNewFolderDialog(false);
+                  setNewFolderName('');
+                }
+              }}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowNewFolderDialog(false);
+                  setNewFolderName('');
+                }}
+                className="btn-secondary flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateFolder}
+                className="btn-primary flex-1"
+                disabled={!newFolderName.trim()}
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

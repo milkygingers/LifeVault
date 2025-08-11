@@ -76,11 +76,33 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
     const uploadedFiles = event.target.files;
     if (!uploadedFiles) return;
 
-    // In a real implementation, you'd copy files to the Files directory
-    console.log('Uploading files:', Array.from(uploadedFiles).map(f => f.name));
-    
-    // Reload files after upload
-    await loadFiles();
+    try {
+      // In a real implementation, you'd copy files to the Files directory
+      console.log('Uploading files:', Array.from(uploadedFiles).map(f => f.name));
+      
+      // Simulate file upload
+      const newFiles = Array.from(uploadedFiles).map(file => {
+        const extension = file.name.split('.').pop()?.toLowerCase() || '';
+        return {
+          name: file.name,
+          path: `${workspace.path}/Files/${file.name}`,
+          size: file.size,
+          type: extension,
+          modified: new Date(),
+          isImage: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension),
+          isVideo: ['mp4', 'mov', 'avi', 'webm', 'mkv'].includes(extension),
+          isDocument: ['pdf', 'doc', 'docx', 'txt', 'md', 'rtf'].includes(extension)
+        } as FileItem;
+      });
+      
+      setFiles(prev => [...newFiles, ...prev]);
+      
+      // Reset the input
+      event.target.value = '';
+    } catch (error) {
+      console.error('Failed to upload files:', error);
+      alert('Failed to upload files. Please try again.');
+    }
   };
 
   const handleFileSelect = (filePath: string) => {
@@ -125,37 +147,37 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
   });
 
   const renderGridView = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
       {filteredFiles.map((file) => (
         <div
           key={file.path}
-          className={`card p-4 cursor-pointer transition-all hover:shadow-md ${
-            selectedFiles.has(file.path) ? 'ring-2 ring-vault-primary' : ''
+          className={`card card-interactive p-6 group animate-fade-in ${
+            selectedFiles.has(file.path) ? 'ring-2 ring-vault-primary shadow-lg' : ''
           }`}
           onClick={() => handleFileSelect(file.path)}
         >
           <div className="flex flex-col items-center text-center">
             {file.isImage ? (
-              <div className="w-16 h-16 bg-gray-100 rounded-lg mb-3 overflow-hidden">
+              <div className="w-20 h-20 bg-gray-100 rounded-xl mb-4 overflow-hidden shadow-sm">
                 <img 
                   src={`file://${file.path}`} 
                   alt={file.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+              <div className="w-20 h-20 bg-gray-100 rounded-xl mb-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                 {getFileIcon(file)}
               </div>
             )}
             
-            <span className="text-sm font-medium text-vault-text truncate w-full" title={file.name}>
+            <span className="text-sm font-semibold text-vault-text truncate w-full" title={file.name}>
               {file.name}
             </span>
-            <span className="text-xs text-vault-text-secondary mt-1">
+            <span className="text-xs text-vault-text-secondary mt-2 px-2 py-1 bg-gray-100 rounded-full">
               {formatFileSize(file.size)}
             </span>
           </div>
@@ -196,19 +218,19 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
   );
 
   return (
-    <div className="h-full bg-vault-bg overflow-y-auto">
-      <div className="p-6">
+    <div className="h-full bg-vault-bg overflow-y-auto scrollbar-thin">
+      <div className="p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-vault-text mb-2">Files</h1>
-            <p className="text-vault-text-secondary">
+            <h1 className="text-3xl font-bold gradient-text mb-3">Files</h1>
+            <p className="text-vault-text-secondary text-lg">
               {filteredFiles.length} file{filteredFiles.length !== 1 ? 's' : ''}
               {filterType !== 'all' && ` • ${filterType}`}
             </p>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <input
               type="file"
               multiple
@@ -220,24 +242,24 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
               htmlFor="file-upload"
               className="btn-primary cursor-pointer"
             >
-              <Upload size={16} className="mr-2" />
+              <Upload size={18} />
               Upload Files
             </label>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-6">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-vault-text-secondary" size={16} />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-vault-text-secondary" size={18} />
               <input
                 type="text"
                 placeholder="Search files..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-lg focus:ring-2 focus:ring-vault-primary focus:bg-white transition-colors w-64"
+                className="input-search w-80"
               />
             </div>
 
@@ -245,7 +267,7 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-3 py-2 bg-gray-100 border-0 rounded-lg focus:ring-2 focus:ring-vault-primary focus:bg-white transition-colors"
+              className="input-primary w-40"
             >
               <option value="all">All Files</option>
               <option value="images">Images</option>
@@ -256,35 +278,33 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {selectedFiles.size > 0 && (
-              <div className="flex items-center gap-2 mr-4">
-                <span className="text-sm text-vault-text-secondary">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-vault-text-secondary font-medium">
                   {selectedFiles.size} selected
                 </span>
-                <button className="btn-secondary text-sm">
-                  <Download size={14} className="mr-1" />
+                <button className="btn-secondary">
+                  <Download size={16} />
                   Download
                 </button>
               </div>
             )}
             
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <div className="view-toggle-group">
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
+                className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                title="List View"
               >
-                <List size={16} />
+                <List size={18} />
               </button>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
+                className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                title="Grid View"
               >
-                <Grid size={16} />
+                <Grid size={18} />
               </button>
             </div>
           </div>
@@ -292,26 +312,26 @@ const FilesView: React.FC<FilesViewProps> = ({ workspace }) => {
 
         {/* Content */}
         {filteredFiles.length === 0 ? (
-          <div className="text-center py-12">
-            <Upload className="mx-auto text-vault-text-secondary mb-4" size={48} />
-            <h3 className="text-lg font-medium text-vault-text mb-2">
+          <div className="empty-state">
+            <Upload className="empty-state-icon" size={64} />
+            <h3 className="empty-state-title">
               {searchTerm || filterType !== 'all' ? 'No files found' : 'No files yet'}
             </h3>
-            <p className="text-vault-text-secondary mb-4">
+            <p className="empty-state-subtitle">
               {searchTerm || filterType !== 'all' 
                 ? 'Try adjusting your search or filter criteria.'
                 : 'Upload some files to get started organizing your digital assets.'
               }
             </p>
             {!searchTerm && filterType === 'all' && (
-              <label htmlFor="file-upload" className="btn-primary cursor-pointer">
-                <Upload size={16} className="mr-2" />
+              <label htmlFor="file-upload" className="btn-primary cursor-pointer mt-6">
+                <Upload size={18} />
                 Upload Your First Files
               </label>
             )}
           </div>
         ) : (
-          <div>
+          <div className="animate-fade-in">
             {viewMode === 'grid' ? renderGridView() : renderListView()}
           </div>
         )}

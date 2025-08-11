@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { 
   Network, 
   FolderTree, 
@@ -15,7 +14,7 @@ import {
 import { useTheme } from './hooks/useTheme';
 import { useWorkspace } from './hooks/useWorkspace';
 
-import TopNavigation from './components/TopNavigation';
+
 import Sidebar from './components/Sidebar';
 import MindMapView from './components/MindMapView';
 import FoldersView from './components/FoldersView';
@@ -30,6 +29,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('folders');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
 
   const tabs = [
     { id: 'mindmap', label: 'Mind Map', icon: Network },
@@ -47,6 +47,28 @@ const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Handle create new item
+  const handleCreateNew = (type: string) => {
+    setShowCreateMenu(false);
+    
+    switch (type) {
+      case 'note':
+        setActiveTab('notes');
+        // Trigger note creation in NotesView
+        break;
+      case 'folder':
+        setActiveTab('folders');
+        // Trigger folder creation in FoldersView
+        break;
+      case 'file':
+        setActiveTab('files');
+        // Trigger file upload in FilesView
+        break;
+      default:
+        break;
+    }
+  };
 
   if (!workspace) {
     return <WelcomeScreen onWorkspaceSelected={initializeWorkspace} />;
@@ -70,20 +92,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-vault-bg">
+    <div className="flex h-screen bg-vault-bg animate-fade-in">
       {/* Top Navigation */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-vault-surface border-b">
-        <div className="flex items-center justify-between px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 z-50 glass-effect border-b backdrop-blur-xl">
+        <div className="flex items-center justify-between px-6 py-4">
           {/* Logo and Tabs */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-vault-primary rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-vault-primary to-vault-secondary rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
                 LV
               </div>
-              <span className="font-semibold text-lg">LifeVault</span>
+              <span className="font-bold text-xl gradient-text">LifeVault</span>
             </div>
             
-            <nav className="flex items-center gap-1">
+            <nav className="flex items-center gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -92,7 +114,7 @@ const App: React.FC = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`toolbar-tab ${activeTab === tab.id ? 'active' : ''}`}
                   >
-                    <Icon size={16} />
+                    <Icon size={18} />
                     {tab.label}
                   </button>
                 );
@@ -101,27 +123,60 @@ const App: React.FC = () => {
           </div>
 
           {/* Search and Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-vault-text-secondary" size={16} />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-vault-text-secondary" size={18} />
               <input
                 type="text"
                 placeholder="Search everything..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-lg focus:ring-2 focus:ring-vault-primary focus:bg-white transition-colors w-64"
+                className="input-search w-80"
               />
             </div>
 
             {/* Quick Actions */}
-            <button className="btn-ghost p-2" title="Create New">
-              <Plus size={20} />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowCreateMenu(!showCreateMenu)}
+                className="btn-icon" 
+                title="Create New"
+              >
+                <Plus size={20} />
+              </button>
+              
+              {/* Create Menu Dropdown */}
+              {showCreateMenu && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-slide-up">
+                  <button
+                    onClick={() => handleCreateNew('note')}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  >
+                    <FileText size={16} />
+                    New Note
+                  </button>
+                  <button
+                    onClick={() => handleCreateNew('folder')}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  >
+                    <FolderTree size={16} />
+                    New Folder
+                  </button>
+                  <button
+                    onClick={() => handleCreateNew('file')}
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  >
+                    <Files size={16} />
+                    Upload File
+                  </button>
+                </div>
+              )}
+            </div>
             
             <button 
               onClick={toggleTheme}
-              className="btn-ghost p-2" 
+              className="btn-icon" 
               title="Toggle Theme"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -131,10 +186,10 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 pt-16">
+      <div className="flex flex-1 pt-20">
         {/* Sidebar */}
         {sidebarOpen && (
-          <div className="w-80 bg-vault-surface border-r">
+          <div className="w-80 bg-white border-r border-gray-200 shadow-sm animate-slide-up">
             <Sidebar 
               workspace={workspace} 
               activeTab={activeTab}
@@ -144,21 +199,31 @@ const App: React.FC = () => {
         )}
 
         {/* Main Panel */}
-        <div className="flex-1 overflow-hidden">
-          {renderActiveView()}
+        <div className="flex-1 overflow-hidden bg-gray-50/50">
+          <div className="h-full">
+            {renderActiveView()}
+          </div>
         </div>
       </div>
 
       {/* Sidebar Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className={`fixed top-[72px] z-40 bg-vault-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 ${
-          sidebarOpen ? 'left-[320px]' : 'left-4'
+        className={`fixed top-24 z-40 bg-gradient-to-r from-vault-primary to-vault-secondary text-white rounded-full p-4 shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 animate-bounce-gentle ${
+          sidebarOpen ? 'left-[320px]' : 'left-6'
         }`}
         title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
       >
-        <FolderTree size={18} />
+        <FolderTree size={20} />
       </button>
+
+      {/* Click outside to close create menu */}
+      {showCreateMenu && (
+        <div 
+          className="fixed inset-0 z-30"
+          onClick={() => setShowCreateMenu(false)}
+        />
+      )}
     </div>
   );
 };
