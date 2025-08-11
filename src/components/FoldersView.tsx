@@ -172,7 +172,7 @@ const FoldersView: React.FC<FoldersViewProps> = ({ workspace }) => {
       {items.map((item) => (
         <div
           key={item.path}
-          className="file-item animate-fade-in"
+          className="file-item animate-fade-in group"
           onClick={() => handleItemClick(item)}
         >
           <div className="group-hover:scale-110 transition-transform duration-300">

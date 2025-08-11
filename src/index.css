@@ -109,7 +109,7 @@
 
   /* Enhanced File/Folder Items */
   .file-item {
-    @apply flex items-center gap-3 p-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-all duration-200 group;
+    @apply flex items-center gap-3 p-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-all duration-200;
   }
 
   .file-item:hover {
@@ -218,7 +218,7 @@
 }
 
 .markdown-preview {
-  @apply prose prose-sm max-w-none p-6;
+  @apply max-w-none p-6;
 }
 
 .markdown-preview h1 {
