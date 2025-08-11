@@ -14,7 +14,7 @@ import {
 import { useTheme } from './hooks/useTheme';
 import { useWorkspace } from './hooks/useWorkspace';
 
-
+import Logo from './components/Logo';
 import Sidebar from './components/Sidebar';
 import MindMapView from './components/MindMapView';
 import FoldersView from './components/FoldersView';
@@ -98,12 +98,7 @@ const App: React.FC = () => {
         <div className="flex items-center justify-between px-6 py-4">
           {/* Logo and Tabs */}
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-vault-primary to-vault-secondary rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                LV
-              </div>
-              <span className="font-bold text-xl gradient-text">LifeVault</span>
-            </div>
+            <Logo size={44} />
             
             <nav className="flex items-center gap-2">
               {tabs.map((tab) => {

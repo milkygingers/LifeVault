@@ -1,5 +1,6 @@
 import React from 'react';
 import { FolderOpen, Star, Zap, Network, BookOpen } from 'lucide-react';
+import Logo from './Logo';
 
 interface WelcomeScreenProps {
   onWorkspaceSelected: (path: string) => Promise<boolean>;
@@ -53,9 +54,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onWorkspaceSelected }) =>
         {/* Hero Section */}
         <div className="text-center mb-20">
           <div className="flex justify-center mb-10 animate-bounce-gentle">
-            <div className="w-28 h-28 bg-gradient-to-r from-vault-primary to-vault-secondary rounded-3xl flex items-center justify-center shadow-2xl">
-              <span className="text-5xl font-bold text-white">LV</span>
-            </div>
+            <Logo size={120} showText={false} animated={true} />
           </div>
           
           <h1 className="text-6xl font-bold text-vault-text mb-8 leading-tight">
