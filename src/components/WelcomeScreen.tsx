@@ -27,23 +27,23 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onWorkspaceSelected }) =>
   const features = [
     {
       icon: Network,
-      title: 'Mind Map View',
+      title: '🧠 Mind Map View',
       description: 'Visualize connections between your notes and ideas in an interactive graph'
     },
     {
       icon: BookOpen,
-      title: 'PARA Method',
-      description: 'Organize with Projects, Areas, Resources, and Archive structure'
+      title: '📊 PARA Method',
+      description: 'Professional organization with Projects, Areas, Resources, and Archive'
     },
     {
       icon: Star,
-      title: 'Rich Editor',
-      description: 'Markdown support with live preview and WYSIWYG editing'
+      title: '✨ Rich Editor',
+      description: 'Beautiful markdown editor with live preview and instant sync'
     },
     {
       icon: Zap,
-      title: 'Local-First',
-      description: 'Your data stays on your device with real-time file system sync'
+      title: '🔒 Privacy First',
+      description: 'Your data stays private in your browser - no servers, no tracking'
     }
   ];
 
@@ -59,23 +59,23 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onWorkspaceSelected }) =>
           </div>
           
           <h1 className="text-5xl font-bold text-vault-text mb-6">
-            Welcome to <span className="text-vault-primary">LifeVault</span>
+            Welcome to <span className="text-vault-primary">LifeVault</span> ✨
           </h1>
           
           <p className="text-xl text-vault-text-secondary mb-8 max-w-2xl mx-auto">
-            Your personal productivity workspace combining the best of Notion, Obsidian, and Ember.ly
+            Your beautiful, personal productivity workspace that combines the best of Notion, Obsidian, and Ember.ly 🚀
           </p>
 
           <button
             onClick={handleSelectFolder}
-            className="btn-primary text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+            className="btn-primary text-lg px-10 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-200 bg-gradient-to-r from-vault-primary to-vault-secondary"
           >
             <FolderOpen className="inline mr-3" size={24} />
-            Create Your Workspace
+            🚀 Start Your Journey
           </button>
           
           <p className="text-sm text-vault-text-secondary mt-4">
-            Create a new workspace to organize your projects, areas, resources, and archive
+            Create your personal productivity workspace in seconds ⚡
           </p>
         </div>
 
@@ -102,8 +102,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onWorkspaceSelected }) =>
 
         {/* Footer */}
         <div className="text-center mt-16">
-          <p className="text-vault-text-secondary">
+          <p className="text-vault-text-secondary mb-2">
             Built with ❤️ for productive minds
+          </p>
+          <p className="text-sm text-vault-text-secondary">
+            Created by Alyssa • Open Source • Made with React & TypeScript
           </p>
         </div>
       </div>

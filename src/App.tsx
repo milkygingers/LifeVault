@@ -152,12 +152,12 @@ const App: React.FC = () => {
       {/* Sidebar Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className={`fixed top-20 z-40 bg-vault-surface border rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-200 ${
-          sidebarOpen ? 'left-[336px]' : 'left-4'
+        className={`fixed top-[72px] z-40 bg-vault-primary text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 ${
+          sidebarOpen ? 'left-[320px]' : 'left-4'
         }`}
         title={sidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
       >
-        <FolderTree size={16} />
+        <FolderTree size={18} />
       </button>
     </div>
   );
